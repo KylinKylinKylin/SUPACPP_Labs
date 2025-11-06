@@ -49,16 +49,11 @@ bool ReadData(const string& inputfile, vector<double>& x, vector<double>& y) {
 
 // Second functions takes filled vectors x and y and prints the asked amount to the terminal
 
-void Printer(const vector<double>& x, const vector<double>& y) {
+void Printer(const vector<double>& x, const vector<double>& y, int& N) {
     if (x.empty() || y.empty()) {
         cout << "Input vectors are empty try again!" << endl;
         return;
     }
-
-    // Initialize variables and asks user to input a value
-    int N;
-    cout << "Enter the number of lines from the data file you want to be printed to the terminal: ";
-    cin >> N;
 
     // error if too large prints first 5 lines
     if (N > x.size() || N > y.size()) {
@@ -93,12 +88,11 @@ vector<double> magnitudes(vector<double>& x, vector<double>& y) {
 
 // Function that takes in x, y data and fits a straight line to it using least squares method saving as a string to another file
 
-void BestFit(vector<double>& x, vector<double>& y) {
+void BestFit(vector<double>& x, vector<double>& y, int& N) {
     // N should be declared from the printer function
     // loop required to determine p and q
 
     double p, q, xy1, x2, y2, xx1;
-    int N;
 
     // xy1 is the sum of x_i * y_i
     // x2 is the sum of all x_i
@@ -111,7 +105,7 @@ void BestFit(vector<double>& x, vector<double>& y) {
     y2 = 0;
     xx1 = 0;
 
-    for (int i=0; i<x.size(); i++) {
+    for (int i=0; i<N; i++) {
         xy1 += x[i] * y[i];
         x2 += x[i];
         y2 += y[i];
@@ -129,5 +123,55 @@ void BestFit(vector<double>& x, vector<double>& y) {
     output_file.open("Eqn_out.txt");
     output_file << "y=" << p << "x+" << q;
     output_file.close();
+    return;
+}
+
+// Chi squared function to dermine how good the line is
+void Chi_squared(int& N, vector<double>& x, vector<double>& y) {
+    
+    // Initialize variable and vectors of errors
+    vector<double> xerr, yerr;
+
+    // Reads the error data and outputs the xy errs into xerr and yerr
+    string input = "error2D_float.txt";
+    ReadData(input, xerr, yerr);
+
+    // Opens the output eqn file and reads the p and q values
+    // opens the file
+    ifstream eqn_file("Eqn_out.txt");
+
+    // error output if file cannot be openned
+    if (!eqn_file.is_open()) {
+        cerr << "Error cannot open the file!";
+        return;
+    }
+
+    // reads the text file into a string line
+    string line;
+    getline(eqn_file,line);
+    
+    // removes all non-numeric variables leaving only p and q
+    for (char &ch : line)
+        if (!(isdigit(ch) || ch == '.' || ch == '-' || ch == '+'))
+            ch = ' ';
+
+    // reads it into p and q variables and closes file
+    double p, q;
+    istringstream iss(line);
+    iss >> p >> q;
+    eqn_file.close();
+
+    // line equation now used to calculate the expected values and observed values
+    double chi = 0;
+
+    for (int i=0; i<N; i++) {
+        double E = p * x[i] + q;
+        double O = y[i];
+        double sigma = yerr[i];
+        chi += pow((O-E),2) / pow(sigma, 2);
+    }
+    
+    cout << "The Chi_squared value of the line is: ";
+    cout << chi << endl;
     return;
 }

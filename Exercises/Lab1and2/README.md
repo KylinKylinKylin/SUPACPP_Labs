@@ -14,6 +14,7 @@ This file contains custom functions.
 - Printer: prints a specified number of lines from the data file to the terminal.
 - magnitudes: Calculates the magnitude of the x and y variables outputing it as a vector of magnitudes.
 - BestFit: Calculates the line of best fit for the data using the least squares method. Outputs to equation to the terminal and text file.
+- Chi_squared: Calculates the $\Chi^{2}$ value for the line of best fit.
 
 CustomFunctions.h: \
 Header file corresponding to the CustomFunctions.cpp file.
