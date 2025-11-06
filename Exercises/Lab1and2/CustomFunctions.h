@@ -7,3 +7,4 @@ using namespace std;
 bool ReadData(const string&, vector<double>&, vector<double>&);
 void Printer(const vector<double>&, const vector<double>&);
 vector<double> magnitudes(vector<double>&, vector<double>&);
+void BestFit(vector<double>&, vector<double>&);
