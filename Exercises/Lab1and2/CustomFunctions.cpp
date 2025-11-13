@@ -3,7 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <algorithm>
 #include <string.h>
+#include <utility>
 
 using namespace std;
 
@@ -49,8 +51,7 @@ bool ReadData(const string& inputfile, vector<double>& x, vector<double>& y) {
 
 // Print_to functions to be used in all functions to print to screen using overloading
 // Second functions takes filled vectors x and y and prints the asked amount to the terminal
-template<typename A, typename B, typename C> 
-void Printer(const vector<A>& x, const vector<B>& y, C& N) {
+void Printer(const vector<double>& x, const vector<double>& y, int& N) {
     if (x.empty() || y.empty()) {
         cout << "Input vectors are empty try again!" << endl;
         return;
@@ -73,8 +74,7 @@ void Printer(const vector<A>& x, const vector<B>& y, C& N) {
         cout << y[i] << endl;
     }
 }
-template <typename T>
-void Printer(const T& input) {
+void Printer(const string& input) {
     cout << input << endl;
 }
 
@@ -93,7 +93,7 @@ vector<double> magnitudes(vector<double>& x, vector<double>& y) {
 
 // Function that takes in x, y data and fits a straight line to it using least squares method saving as a string to another file
 
-void BestFit(vector<double>& x, vector<double>& y, int& N) {
+pair<double, double> BestFit(vector<double>& x, vector<double>& y, int& N) {
     // N should be declared from the printer function
     // loop required to determine p and q
 
@@ -158,7 +158,46 @@ void BestFit(vector<double>& x, vector<double>& y, int& N) {
         cout << "Error! Could not open output file!" << endl;
     }
 
-    return;
+    return {p, q};
 }
 
 // x^y function
+vector<double> XpY(vector<double>& x, vector<double>& y) {
+
+    // manually x^y with rounded y values 
+    function<double(double, int)> inpow = [&](double x, int n) -> double {
+        if (n == 0) return 1.0;
+        if (n < 0) return 1.0 / inpow(x, -n);
+        return x * inpow(x, n-1);
+    };
+
+    vector<double> result(x.size());
+
+    // rounding each y term and using as the power to x
+    transform(x.begin(), x.end(), y.begin(), result.begin(), [&inpow](double b, double e) {
+        int rounded = round(e);
+        return inpow(b, rounded);
+    });
+    return result;
+}
+
+// Overload for vector<double>
+// Save a vector<double> to a file
+void Lastfunc(const vector<double>& vec, const string& filename) {
+    std::ofstream file(filename);
+    if (!file) { 
+        cerr << "Error opening file '" << filename << "'\n"; 
+        return; 
+    }
+    for (const auto& val : vec) file << val << "\n";
+}
+
+// Save line equation y = slope * x + intercept
+void Lastfunc(double p, double q, const string& filename) {
+    std::ofstream file(filename);
+    if (!file) { 
+        cerr << "Error opening file '" << filename << "'\n"; 
+        return; 
+    }
+    file << "y = " << p << "x + " << q << "\n";
+}
