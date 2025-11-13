@@ -1,8 +1,8 @@
 # Lecture 1 code
 First part of the Assigment for lecture 1.
 
-To run this code just type ./makefile into the terminal.
-The executable file will be removed automatically afterwards.
+To run this code just type make into the terminal.
+The executable files will be removed automatically afterwards.
 
 ## Contents
 AnalyseData.cpp: \
