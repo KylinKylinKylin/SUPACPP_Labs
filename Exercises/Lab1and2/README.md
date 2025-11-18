@@ -1,7 +1,7 @@
 # Lecture 1 code
 First part of the Assigment for lecture 1.
 
-To run this code just type make into the terminal.
+To run this code just type "make" into the terminal.
 The executable files will be removed automatically afterwards.
 
 ## Contents

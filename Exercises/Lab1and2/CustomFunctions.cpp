@@ -144,7 +144,7 @@ pair<double, double> BestFit(vector<double>& x, vector<double>& y, int& N) {
     double dof = xerr.size() - params;
     double chi2_dof = chi / dof;
     
-    string result = "Least squares fit: y = " + to_string(p) + " + " + to_string(q) + "x\n" 
+    string result = "Least squares fit: y = " + to_string(p) + "x + " + to_string(q) + "\n" 
     + "Chi^2 / NDOF = " + to_string(chi2_dof) + "x\n"
     + "Chi^2 = " + to_string(chi);
 
